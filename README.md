@@ -1,6 +1,6 @@
 # ExceptionNotification::Ikachan
 
-TODO: Write a gem description
+ExceptionNotification  plugin for Ikachan!!!
 
 ## Installation
 
@@ -18,7 +18,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+FooBar::Application.configure do
+  config.middleware.use ExceptionNotification::Rack,
+    ikachan: {
+      channel: '#udzura',
+      base_url: 'ikachan.example.com:8080'
+    }
+end
+```
+
+`:message_format` like `"%{class}: %{message}"` also available.
 
 ## Contributing
 
