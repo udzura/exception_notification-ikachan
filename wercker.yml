@@ -1,0 +1,8 @@
+box: wercker/ruby
+# http://devcenter.wercker.com/articles/languages/ruby.html
+build:
+  steps:
+    - bundle-install
+    - script:
+        name: Running rake spec
+        code: bundle exec rspec spec/
