@@ -5,4 +5,4 @@ build:
     - bundle-install
     - script:
         name: Running rake spec
-        code: bundle exec rspec spec/
+        code: bundle exec rake spec
