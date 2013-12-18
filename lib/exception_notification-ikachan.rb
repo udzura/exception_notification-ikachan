@@ -1,1 +1,1 @@
-require 'exception_notification/ikachan'
+require 'exception_notifier/ikachan_notifier'

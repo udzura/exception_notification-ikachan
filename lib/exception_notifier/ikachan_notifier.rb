@@ -1,8 +1,8 @@
 require "exception_notification/ikachan/version"
 require 'net/http'
 
-module ExceptionNotification
-  class Ikachan
+module ExceptionNotifier
+  class IkachanNotifier
     class Client
       def initialize(base_url)
         @base_url = base_url.match(/^https?:\/\/[^\/]+\//) ? base_url : "http://#{base_url}/"
@@ -61,9 +61,8 @@ module ExceptionNotification
       }
       return message_format % params
     end
-  end
-end
 
-module ExceptionNotifier
-  IkachanNotifier = ExceptionNotification::Ikachan
+    # alias
+    VERSION = ExceptionNotification::Ikachan::VERSION
+  end
 end
