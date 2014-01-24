@@ -42,12 +42,13 @@ describe ExceptionNotifier::IkachanNotifier do
       stub_request(:post, "http://ikachan.udzura.jp/notice")
     end
     let(:exception) { StandardError.new("Hello, exception!")}
-      let(:options) do
-        {
-          base_url: 'ikachan.udzura.jp',
-          channel:  '#udzura',
-        }.merge(extra_options)
-      end
+
+    let(:options) do
+      {
+        base_url: 'ikachan.udzura.jp',
+        channel:  '#udzura',
+      }.merge(extra_options)
+    end
 
     describe "message with request info" do
       let(:extra_options) do
@@ -57,6 +58,20 @@ describe ExceptionNotifier::IkachanNotifier do
       it "should include request's path info" do
         notifier.build_message(exception, {env: {'PATH_INFO' => '/foo/bar'}})
         expect(notifier.message).to eq("/foo/bar")
+      end
+    end
+
+    describe "message with more request info" do
+      let(:env_sane) do
+        {"HTTP_HOST" => "example.udzura.jp:80", "rack.url_scheme" => 'http', "PATH_INFO" => "/hello.html"}
+      end
+      let(:extra_options) do
+        {message_format: '%{request_url} / ssl? = %{request_ssl?}'}
+      end
+
+      it do
+        notifier.build_message(exception, {env: env_sane})
+        expect(notifier.message).to eq("http://example.udzura.jp/hello.html / ssl? = false")
       end
     end
 
