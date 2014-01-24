@@ -1,6 +1,8 @@
 # ExceptionNotification::Ikachan
 
-ExceptionNotification  plugin for Ikachan!!!
+ExceptionNotification plugin for Ikachan!!!
+
+[![wercker status](https://app.wercker.com/status/6e059ec136a619b280a4f5b05e4a685b/m "wercker status")](https://app.wercker.com/project/bykey/6e059ec136a619b280a4f5b05e4a685b)
 
 ## Installation
 
@@ -29,6 +31,26 @@ end
 ```
 
 `:message_format` like `"%{class}: %{message}"` also available.
+
+### Message modifiers
+
+* `:message_prefix` - Adds prefix to default format
+* `:message_suffix` - Adds suffix to default format
+* `:message_nocolor` - Decolorize the format
+
+## Keys available in `:message_format`
+
+* `%{class}` - Exception class
+* `%{messgae}` - Exception message
+* `%{occurred}` - A line that the exception is first thrown (`exception.backtrace.first`)
+
+### Request keys
+
+Nofitier can notify the information via web requests.
+Keys named like `'%{request_path_info}', %{request_url}'` will be
+converted to descriptions from `request.path_info, request.url`, and so on.
+
+`request` should be an instance of `ActionDispatch::Request` (Rails) or `Rack::Request` (Other Rack apps)
 
 ## Contributing
 
