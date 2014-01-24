@@ -48,7 +48,7 @@ module ExceptionNotifier
       end
     end
     attr_reader :client, :channels, :message_format, :message
-    DEFAULT_FORMAT = "\x02\x0315,4[ERROR]\x03 \x0313%{class}\x03 - \x038%{message}\x03, %{occurred}\x0f"
+    DEFAULT_FORMAT = "\x02\x0315,4[ERROR]\x03 \x0313%{class}\x03 - %{message}\x03\x0f, %{occurred}"
     IRC_SEQUENCE_RE = Regexp.new("[\x02\x03\x0f](\\d+)?(,\\d+)?")
 
     def call(exception, options = {})
