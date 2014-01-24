@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Exception notification-ikachan by udzura</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Exception notification-ikachan</h1>
+          <h2>Ikachan plugin for exception_notification</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/udzura/exception_notification-ikachan/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/udzura/exception_notification-ikachan/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/udzura/exception_notification-ikachan" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="exceptionnotificationikachan" class="anchor" href="#exceptionnotificationikachan"><span class="octicon octicon-link"></span></a>ExceptionNotification::Ikachan</h1>
+
+<p>ExceptionNotification plugin for Ikachan!!!</p>
+
+<p><a href="https://app.wercker.com/project/bykey/6e059ec136a619b280a4f5b05e4a685b"><img src="https://app.wercker.com/status/6e059ec136a619b280a4f5b05e4a685b/m" alt="wercker status" title="wercker status"></a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'exception_notification-ikachan'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install exception_notification-ikachan
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-ruby"><pre><span class="no">FooBar</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="no">ExceptionNotification</span><span class="o">::</span><span class="no">Rack</span><span class="p">,</span>
+    <span class="ss">ikachan</span><span class="p">:</span> <span class="p">{</span>
+      <span class="ss">channel</span><span class="p">:</span> <span class="s1">'#udzura'</span><span class="p">,</span>
+      <span class="n">base_url</span><span class="p">:</span> <span class="s1">'ikachan.example.com:8080'</span>
+    <span class="p">}</span>
+<span class="k">end</span>
+</pre></div>
+
+<p><code>:message_format</code> like <code>"%{class}: %{message}"</code> also available.</p>
+
+<h3>
+<a name="message-modifiers" class="anchor" href="#message-modifiers"><span class="octicon octicon-link"></span></a>Message modifiers</h3>
+
+<ul>
+<li>
+<code>:message_prefix</code> - Adds prefix to default format</li>
+<li>
+<code>:message_suffix</code> - Adds suffix to default format</li>
+<li>
+<code>:message_nocolor</code> - Decolorize the format</li>
+</ul><h2>
+<a name="keys-available-in-message_format" class="anchor" href="#keys-available-in-message_format"><span class="octicon octicon-link"></span></a>Keys available in <code>:message_format</code>
+</h2>
+
+<ul>
+<li>
+<code>%{class}</code> - Exception class</li>
+<li>
+<code>%{messgae}</code> - Exception message</li>
+<li>
+<code>%{occurred}</code> - A line that the exception is first thrown (<code>exception.backtrace.first</code>)</li>
+</ul><h3>
+<a name="request-keys" class="anchor" href="#request-keys"><span class="octicon octicon-link"></span></a>Request keys</h3>
+
+<p>Nofitier can notify the information via web requests.
+Keys named like <code>'%{request_path_info}', %{request_url}'</code> will be
+converted to descriptions from <code>request.path_info, request.url</code>, and so on.</p>
+
+<p><code>request</code> should be an instance of <code>ActionDispatch::Request</code> (Rails) or <code>Rack::Request</code> (Other Rack apps)</p>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+        </section>
+
+        <footer>
+          Exception notification-ikachan is maintained by <a href="https://github.com/udzura">udzura</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
