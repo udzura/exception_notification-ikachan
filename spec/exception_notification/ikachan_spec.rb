@@ -59,6 +59,13 @@ describe ExceptionNotifier::IkachanNotifier do
         notifier.build_message(exception, {env: {'PATH_INFO' => '/foo/bar'}})
         expect(notifier.message).to eq("/foo/bar")
       end
+
+      it "should not raise error without env" do
+        expect {
+          notifier.build_message(exception)
+        }.not_to raise_error
+        expect(notifier.message).to eq("")
+      end
     end
 
     describe "message with more request info" do

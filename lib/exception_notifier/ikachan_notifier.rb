@@ -12,7 +12,6 @@ module ExceptionNotifier
       def notice_all(channels, message)
         channels.each do |channel|
           join(channel)
-          p message
           message.each_line do |line|
             notice(channel, line)
           end
@@ -65,7 +64,7 @@ module ExceptionNotifier
         message:  exception.message,
         occurred: (exception.backtrace.first rescue nil),
       }
-      params.merge!(build_params_from_request(options[:env])) if options[:env]
+      params.merge!(build_params_from_request(options[:env]))
       @message = message_format % params
     end
 
@@ -90,13 +89,20 @@ module ExceptionNotifier
       end
     end
 
-    def build_params_from_request(env)
+    def build_params_from_request(env=nil)
+      return default_params_from_request unless env
       request = request_klass.new(env)
       dest = {}
       @request_param_names.map{|n| [n, n.sub(/^request_/, '')] }.each do |param_name, attribute|
         dest[param_name.to_sym] = request.send(attribute)
       end
       dest
+    end
+
+    def default_params_from_request
+      @request_param_names.each_with_object({}) do |name, dest|
+        dest[name.to_sym] = ''
+      end
     end
 
     # alias
