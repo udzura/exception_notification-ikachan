@@ -122,20 +122,42 @@ describe ExceptionNotifier::IkachanNotifier do
       {
         base_url: 'ikachan.udzura.jp',
         channel:  '#udzura',
-        message_format: '%{class}: %{message}'
+        message_format: message_format
       }
     end
     let(:exception) { StandardError.new("Hello, exception!")}
 
-    it "should notice message to ikachan" do
-      stub_join = stub_request(:post, "http://ikachan.udzura.jp/join").
-        with(body: {"channel" => "#udzura"})
-      stub_notice = stub_request(:post, "http://ikachan.udzura.jp/notice").
-        with(body: {"channel" => "#udzura", "message" => "StandardError: Hello, exception!"})
+    describe 'single line' do
+      let(:message_format){ '%{class}: %{message}' }
 
-      notifier.call(exception, {})
-      stub_join.should have_been_requested.once
-      stub_notice.should have_been_requested.once
+      it "should notice message to ikachan" do
+        stub_join = stub_request(:post, "http://ikachan.udzura.jp/join").
+          with(body: {"channel" => "#udzura"})
+        stub_notice = stub_request(:post, "http://ikachan.udzura.jp/notice").
+          with(body: {"channel" => "#udzura", "message" => "StandardError: Hello, exception!"})
+
+        notifier.call(exception, {})
+        stub_join.should have_been_requested.once
+        stub_notice.should have_been_requested.once
+      end
+    end
+
+    describe 'multiple line' do
+      let(:message_format){ <<-EOFormat }
+%{class}
+%{message}
+extra info
+      EOFormat
+      it "should notice message to ikachan" do
+        stub_join = stub_request(:post, "http://ikachan.udzura.jp/join").
+          with(body: {"channel" => "#udzura"})
+        stub_notice = stub_request(:post, "http://ikachan.udzura.jp/notice").
+          with(body: {"channel" => "#udzura", "message" => an_instance_of(String)})
+
+        notifier.call(exception, {})
+        stub_join.should have_been_requested.once
+        stub_notice.should have_been_requested.times(3)
+      end
     end
   end
 end

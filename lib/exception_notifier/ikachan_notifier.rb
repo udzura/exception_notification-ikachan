@@ -12,7 +12,10 @@ module ExceptionNotifier
       def notice_all(channels, message)
         channels.each do |channel|
           join(channel)
-          notice(channel, message)
+          p message
+          message.each_line do |line|
+            notice(channel, line)
+          end
         end
       end
 
