@@ -40,26 +40,55 @@ module ExceptionNotifier
       @channels = channel.is_a?(Array) ? channel : [channel]
       @client   = Client.new(options[:base_url])
       @message_format = build_message_format(options)
+      @message  = nil
+
+      @request_param_names = message_format.scan(/%{(request_[a-zA-Z_?!]+)}/).flatten.uniq
+      @request_param_names.map{|n| [n, n.sub(/^request_/, '')] }.each do |param_name, attribute|
+        raise "Parameter name #{param_name} is unavailable" unless request_klass.method_defined?(attribute)
+      end
     end
-    attr_reader :client, :channels, :message_format
+    attr_reader :client, :channels, :message_format, :message
+    DEFAULT_FORMAT = "\x02\x0315,4[ERROR]\x03 \x0313%{class}\x03 - \x038%{message}\x03, %{occurred}\x0f"
 
     def call(exception, options = {})
-      client.notice_all(channels, build_message(exception))
+      build_message(exception, options)
+      client.notice_all(channels, message)
     end
 
-    private
-    def build_message_format(options)
-      return options[:message_format] if options[:message_format]
-      "\x02\x0315,4[ERROR]\x03 \x0313%{class}\x03 - \x038%{message}\x03, %{occurred}\x0f"
-    end
-
-    def build_message(exception)
+    def build_message(exception, options = {})
       params = {
         class:    exception.class,
         message:  exception.message,
         occurred: (exception.backtrace.first rescue nil),
       }
-      return message_format % params
+      params.merge!(build_params_from_request(options[:env])) if options[:env]
+      @message = message_format % params
+    end
+
+    private
+    def request_klass
+      @request_klass ||= if defined?(ActionDispatch::Request)
+        ActionDispatch::Request
+      else
+        require 'rack/request'
+        Rack::Request
+      end
+    rescue LoadError, NameError
+      raise "Please use this notifier in some kind of Rack-based webapp"
+    end
+
+    def build_message_format(options)
+      return options[:message_format] if options[:message_format]
+      DEFAULT_FORMAT
+    end
+
+    def build_params_from_request(env)
+      request = request_klass.new(env)
+      dest = {}
+      @request_param_names.map{|n| [n, n.sub(/^request_/, '')] }.each do |param_name, attribute|
+        dest[param_name.to_sym] = request.send(attribute)
+      end
+      dest
     end
 
     # alias

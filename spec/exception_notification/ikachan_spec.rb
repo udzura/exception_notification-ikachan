@@ -17,6 +17,47 @@ describe ExceptionNotifier::IkachanNotifier do
         expect(notifier.client.base_url).to eq("http://ikachan.udzura.jp/")
       end
     end
+
+    describe "message with invalid request key" do
+      let(:options) do
+        {
+          base_url: 'ikachan.udzura.jp',
+          channel:  '#udzura',
+          message_format: '%{request_noattr}'
+        }
+      end
+
+      it "should just raise error" do
+        expect {
+          notifier
+        }.to raise_error(RuntimeError, "Parameter name request_noattr is unavailable")
+      end
+    end
+  end
+
+  describe "#build_message and #message" do
+    before do
+      require 'rack/request'
+      stub_request(:post, "http://ikachan.udzura.jp/join")
+      stub_request(:post, "http://ikachan.udzura.jp/notice")
+    end
+    let(:exception) { StandardError.new("Hello, exception!")}
+
+    describe "message with request info" do
+      let(:options) do
+        {
+          base_url: 'ikachan.udzura.jp',
+          channel:  '#udzura',
+          message_format: '%{request_path_info}'
+        }
+      end
+
+      it "should include request's path info" do
+        notifier.build_message(exception, {env: {'PATH_INFO' => '/foo/bar'}})
+        expect(notifier.message).to eq("/foo/bar")
+      end
+    end
+
   end
 
   describe "#call" do
