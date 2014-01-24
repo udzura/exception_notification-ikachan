@@ -49,6 +49,7 @@ module ExceptionNotifier
     end
     attr_reader :client, :channels, :message_format, :message
     DEFAULT_FORMAT = "\x02\x0315,4[ERROR]\x03 \x0313%{class}\x03 - \x038%{message}\x03, %{occurred}\x0f"
+    IRC_SEQUENCE_RE = Regexp.new("[\x02\x03\x0f](\\d+)?(,\\d+)?")
 
     def call(exception, options = {})
       build_message(exception, options)
@@ -79,7 +80,11 @@ module ExceptionNotifier
 
     def build_message_format(options)
       return options[:message_format] if options[:message_format]
-      DEFAULT_FORMAT
+      DEFAULT_FORMAT.dup.tap do |fmt|
+        fmt.prepend(options[:message_prefix]) if options[:message_prefix]
+        fmt.concat(options[:message_suffix])  if options[:message_suffix]
+        fmt.gsub!(IRC_SEQUENCE_RE, '')        if options[:message_nocolor]
+      end
     end
 
     def build_params_from_request(env)

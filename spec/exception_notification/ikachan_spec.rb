@@ -42,14 +42,16 @@ describe ExceptionNotifier::IkachanNotifier do
       stub_request(:post, "http://ikachan.udzura.jp/notice")
     end
     let(:exception) { StandardError.new("Hello, exception!")}
-
-    describe "message with request info" do
       let(:options) do
         {
           base_url: 'ikachan.udzura.jp',
           channel:  '#udzura',
-          message_format: '%{request_path_info}'
-        }
+        }.merge(extra_options)
+      end
+
+    describe "message with request info" do
+      let(:extra_options) do
+        {message_format: '%{request_path_info}'}
       end
 
       it "should include request's path info" do
@@ -58,6 +60,46 @@ describe ExceptionNotifier::IkachanNotifier do
       end
     end
 
+    describe "message modifiers" do
+      before { notifier.build_message(exception, {env: {'PATH_INFO' => '/foo/bar'}}) }
+      let(:default_message) do
+        ExceptionNotifier::IkachanNotifier::DEFAULT_FORMAT % {
+          class: "StandardError",
+          message: "Hello, exception!",
+          occurred: ''
+        }
+      end
+
+      describe ':message_prefix' do
+        let(:extra_options) do
+          { message_prefix: 'hello - ' }
+        end
+
+        it do
+          expect(notifier.message).to eq('hello - ' + default_message)
+        end
+      end
+
+      describe ':message_suffix' do
+        let(:extra_options) do
+          { message_suffix: ' - world' }
+        end
+
+        it do
+          expect(notifier.message).to eq(default_message + ' - world')
+        end
+      end
+
+      describe ':message_nocolor' do
+        let(:extra_options) do
+          { message_nocolor: true }
+        end
+
+        it do
+          expect(notifier.message).to eq("[ERROR] StandardError - Hello, exception!, ")
+        end
+      end
+    end
   end
 
   describe "#call" do
