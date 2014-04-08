@@ -1,5 +1,6 @@
 require "exception_notification/ikachan/version"
 require 'net/http'
+require 'socket'
 
 module ExceptionNotifier
   class IkachanNotifier
@@ -63,6 +64,7 @@ module ExceptionNotifier
         class:    exception.class,
         message:  exception.message,
         occurred: (exception.backtrace.first rescue nil),
+        hostname: (Socket.gethostname rescue nil),
       }
       params.merge!(build_params_from_request(options[:env]))
       @message = message_format % params
